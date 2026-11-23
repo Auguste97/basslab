@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101112">
+  <meta name="description" content="BassLab — ton système personnel de progression à la basse.">
+  <title>BassLab</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    :root{color-scheme:dark;--bg:#101112;--panel:#191b1d;--panel2:#202326;--line:#2b2f32;--muted:#92999d;--text:#f2f4f3;--green:#b7f36b;--green2:#8dc94d;--orange:#f2b66d;--red:#ff827c;--radius:18px}
+    *{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+    button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+    .app{max-width:760px;margin:0 auto;padding:0 17px}.topbar{height:70px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(16,17,18,.94);backdrop-filter:blur(16px);z-index:5}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:.13em;font-size:15px}.brand-mark{width:30px;height:30px;border-radius:10px;background:var(--green);color:#121510;display:grid;place-items:center;font-weight:950;font-size:17px}
+    .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750}.icon-btn{width:39px;height:39px;border:1px solid var(--line);background:var(--panel);border-radius:13px;color:var(--text);font-size:17px}
+    main{padding:23px 0 28px}.screen{display:none}.screen.active{display:block}.heading-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}.heading-row h1{font-size:27px;line-height:1.1;margin:5px 0 7px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:13px;margin:0}.date-label{color:var(--green);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:17px;margin-bottom:13px}.hero{background:linear-gradient(135deg,#202a1b,#191d18 62%,#191b1d);border-color:#39472d;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:180px;height:180px;border:1px solid rgba(183,243,107,.12);border-radius:50%;right:-65px;top:-75px;box-shadow:0 0 0 22px rgba(183,243,107,.025),0 0 0 45px rgba(183,243,107,.02)}
+    .hero h2{font-size:23px;line-height:1.15;letter-spacing:-.035em;margin:8px 0}.hero p{color:#b8c1b1;max-width:360px;font-size:13px;margin:0 0 17px}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:99px;background:rgba(183,243,107,.12);color:var(--green);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .btn{border:0;border-radius:12px;padding:12px 15px;background:var(--green);color:#141810;font-weight:850;font-size:13px}.btn:active{transform:scale(.98)}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn.ghost{background:transparent;color:var(--green);border:1px solid #46543b}.btn.full{width:100%}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:22px 1px 11px}.section-title h3{margin:0;font-size:15px;letter-spacing:-.02em}.text-link{border:0;background:none;color:var(--green);font-size:12px;font-weight:750;padding:5px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px}.stat strong{display:block;font-size:22px;letter-spacing:-.04em}.stat span{font-size:10px;color:var(--muted)}
+    .progress-track{height:7px;border-radius:20px;background:#303538;overflow:hidden}.progress-fill{height:100%;width:0;background:var(--green);border-radius:20px;transition:width .2s}
+    .task-row{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid var(--line)}.task-row:last-child{border:0;padding-bottom:0}.check{appearance:none;width:21px;height:21px;flex:0 0 21px;border:1.5px solid #68716d;border-radius:7px;margin:1px 0 0;background:transparent;position:relative}.check:checked{background:var(--green);border-color:var(--green)}.check:checked:after{content:"✓";position:absolute;color:#151a11;font-size:14px;font-weight:900;left:4px;top:-1px}
+    .task-main{flex:1}.task-main strong{display:block;font-size:13px}.task-main small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.task-row.done .task-main strong{text-decoration:line-through;color:var(--muted)}
+    .meta-row{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.tag{font-size:10px;color:#c3c9c5;background:#292e30;border-radius:7px;padding:5px 8px}.tag.green{color:var(--green);background:rgba(183,243,107,.1)}
+    .session-step{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:14px;margin:10px 0}.step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.step-head strong{font-size:13px}.step-time{font-size:10px;color:var(--green);font-weight:800}.session-step p{font-size:12px;color:#b4bbb7;margin:8px 0 0}.notes{font-size:12px;color:#c4cbc6;background:#222725;border-radius:11px;padding:11px;margin-top:10px}
+    .tabs{position:fixed;z-index:10;bottom:0;left:0;right:0;background:rgba(20,22,23,.97);border-top:1px solid var(--line);padding:8px 7px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:2px;backdrop-filter:blur(15px)}.tab{border:0;background:transparent;color:#818987;min-width:0;flex:1;max-width:115px;padding:7px 2px;border-radius:12px;font-size:9px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}.tab .ico{font-size:18px;line-height:1.1}.tab.active{color:var(--green);background:rgba(183,243,107,.08)}
+    .module{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.module:last-child{border:0}.module-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:#282d2a;color:var(--green);font-size:17px}.module-body{flex:1}.module-body strong{font-size:13px;display:block}.module-body small{font-size:11px;color:var(--muted)}.status{font-size:10px;color:var(--muted)}
+    .field{width:100%;border:1px solid var(--line);border-radius:12px;background:#111415;color:var(--text);padding:12px;margin:6px 0 12px}.field::placeholder{color:#69716d}.form-label{font-size:11px;color:#b8c0bb;font-weight:750}.song{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.song:last-child{border:0}.song strong{font-size:13px;display:block}.song small{font-size:11px;color:var(--muted)}
+    .fret-wrap{overflow-x:auto;padding-bottom:8px}.fretboard{min-width:570px}.string-row{display:grid;grid-template-columns:45px repeat(13,1fr);align-items:center;min-height:36px;border-bottom:1px solid #4b5150}.string-name{font-size:10px;color:var(--muted);font-weight:800}.fret{height:34px;display:grid;place-items:center;border-right:1px solid #414746;font-size:10px;color:#7e8882;position:relative}.fret:first-of-type{border-left:2px solid #a6ada7}.note-dot{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#17200f;font-size:9px;font-weight:900;z-index:1}.fret-controls{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.select{background:#202526;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px;font-size:12px}
+    .empty{color:var(--muted);font-size:12px;text-align:center;padding:22px 10px}.footer-note{font-size:10px;color:#707975;text-align:center;padding:18px 0}.toast{position:fixed;z-index:30;bottom:95px;left:50%;transform:translateX(-50%);background:#e1f9c8;color:#17200f;border-radius:12px;padding:10px 15px;font-size:12px;font-weight:800;box-shadow:0 8px 30px #0008;display:none;white-space:nowrap}
+    @media(min-width:650px){.app{padding:0 25px}.topbar{height:78px}.tabs{position:sticky;bottom:auto;top:78px;border:1px solid var(--line);border-radius:15px;margin:14px auto 0;max-width:710px}.tab{flex-direction:row;justify-content:center;font-size:11px}.tab .ico{font-size:15px}body{padding-bottom:20px}main{padding-top:25px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">B</div><span>BASSLAB</span></div>
+      <button class="icon-btn" id="resetBtn" aria-label="Réinitialiser les données" title="Réinitialiser">↻</button>
+    </header>
+    <nav class="tabs" aria-label="Navigation principale">
+      <button class="tab active" data-screen="home"><span class="ico">⌂</span>Accueil</button>
+      <button class="tab" data-screen="practice"><span class="ico">◉</span>Pratique</button>
+      <button class="tab" data-screen="path"><span class="ico">▤</span>Parcours</button>
+      <button class="tab" data-screen="songs"><span class="ico">♫</span>Chansons</button>
+      <button class="tab" data-screen="progress"><span class="ico">↗</span>Progrès</button>
+    </nav>
+
+    <main>
+      <section class="screen active" id="screen-home">
+        <div class="heading-row">
+          <div><div class="date-label" id="todayLabel">TON ESPACE DE TRAVAIL</div><h1>Salut, bassiste.</h1><p class="sub">Construis ton vocabulaire. Une séance à la fois.</p></div>
+          <span class="pill">V1 · 5 cordes</span>
+        </div>
+        <div class="card hero">
+          <span class="pill">Séance du jour · 15 min</span>
+          <h2>Les arpèges majeurs<br>et mineurs</h2>
+          <p>Apprends à utiliser les notes d'un accord pour construire des lignes de basse plus musicales.</p>
+          <button class="btn" data-go="practice">Commencer la séance&nbsp; →</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong id="statSessions">0</strong><span>Séances validées</span></div>
+          <div class="stat"><strong id="statMinutes">0</strong><span>Minutes pratiquées</span></div>
+          <div class="stat"><strong id="statSkills">0%</strong><span>Parcours validé</span></div>
+        </div>
+        <div class="section-title"><h3>Ta progression</h3><button class="text-link" data-go="progress">Voir tout →</button></div>
+        <div class="card">
+          <div class="step-head"><strong>Fondations harmoniques</strong><strong id="foundationPct">0%</strong></div>
+          <div class="progress-track" style="margin-top:12px"><div class="progress-fill" id="foundationBar"></div></div>
+          <p class="sub" style="margin-top:10px">Objectif : comprendre et jouer les arpèges sur ta basse 5 cordes.</p>
+        </div>
+        <div class="section-title"><h3>Prochaine étape</h3><span class="status">TON PARCOURS</span></div>
+        <div class="card">
+          <div class="module"><div class="module-icon">①</div><div class="module-body"><strong>Arpèges majeurs</strong><small>1 – 3 – 5 · C, F, G, D</small></div><span class="tag green">En cours</span></div>
+          <div class="module"><div class="module-icon">②</div><div class="module-body"><strong>Arpèges mineurs</strong><small>1 – ♭3 – 5 · Am, Dm, Em</small></div><span class="status">À venir</span></div>
+          <div class="module"><div class="module-icon">③</div><div class="module-body"><strong>Créer une ligne</strong><small>Variation, rythme et application</small></div><span class="status">À venir</span></div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-practice">
+        <div class="heading-row"><div><div class="date-label">TODAY'S PRACTICE</div><h1>Ta séance</h1><p class="sub">Une séance courte, ciblée et appliquée.</p></div><span class="pill">15 MIN</span></div>
+        <div class="card">
+          <span class="eyebrow">Objectif du jour</span><h2 style="font-size:20px;margin:7px 0">Jouer les arpèges majeurs et mineurs</h2>
+          <p class="sub">À la fin, tu dois pouvoir jouer les notes d'un accord dans l'ordre, puis créer une variation simple.</p>
+          <div class="meta-row"><span class="tag">Basse 5 cordes</span><span class="tag">Départ : 60 BPM</span><span class="tag green">Harmonie</span></div>
+        </div>
+        <div class="section-title"><h3>Déroulement</h3><span class="status" id="taskCount">0 / 4 étapes</span></div>
+        <div id="practiceTasks">
+          <div class="session-step"><div class="step-head"><strong>01 · Mise en route</strong><span class="step-time">2 MIN</span></div><p>Accorde ta basse. Joue lentement les notes C – E – G – C, puis redescends. Cherche un son régulier.</p><label class="task-row"><input class="check task-check" type="checkbox" data-task="0"><span class="task-main"><strong>Je suis prêt et mes notes sont propres.</strong><small>Pas de cordes parasites, pas de précipitation.</small></span></label></div>
+          <div class="session-step"><div class="step-head"><strong>02 · Arpèges majeurs</strong><span class="step-time">4 MIN</span></div><p>Joue C – E – G – C, F – A – C – F, G – B – D – G. Une note par battement à 60 BPM.</p><div class="notes">Formule : fondamentale – tierce majeure – quinte – octave. Chante les notes si possible.</div><label class="task-row"><input class="check task-check" type="checkbox" data-task="1"><span class="task-main"><strong>Je peux jouer les trois arpèges sans m'arrêter.</strong><small>La justesse et la régularité avant la vitesse.</small></span></label></div>
+          <div class="session-step"><div class="step-head"><strong>03 · Arpèges mineurs</strong><span class="step-time">4 MIN</span></div><p>Joue Am : A – C – E – A, Dm : D – F – A – D, Em : E – G – B – E.</p><div class="notes">Formule : fondamentale – tierce mineure – quinte – octave. Écoute la différence avec le majeur.</div><label class="task-row"><input class="check task-check" type="checkbox" data-task="2"><span class="task-main"><strong>J'entends et je joue la différence majeur / mineur.</strong><small>La tierce change la couleur de l'accord.</small></span></label></div>
+          <div class="session-step"><div class="step-head"><strong>04 · Application musicale</strong><span class="step-time">5 MIN</span></div><p>Sur la progression C – Am – F – G : premier tour avec les fondamentales, deuxième tour avec les arpèges, troisième tour avec ton propre ordre de notes.</p><div class="notes">Défi : crée deux lignes différentes tout en gardant le même tempo et la même progression.</div><label class="task-row"><input class="check task-check" type="checkbox" data-task="3"><span class="task-main"><strong>J'ai créé deux lignes différentes sur la progression.</strong><small>Enregistre-toi si tu peux et réécoute le groove.</small></span></label></div>
+        </div>
+        <div class="card">
+          <div class="step-head"><strong>Validation de la séance</strong><span class="tag green" id="practicePct">0%</span></div>
+          <div class="progress-track" style="margin:12px 0"><div class="progress-fill" id="practiceBar"></div></div>
+          <label class="form-label" for="reflection">Une chose réussie / une difficulté à retenir</label>
+          <textarea id="reflection" class="field" rows="3" placeholder="Ex. : je confonds encore la tierce majeure et la tierce mineure..."></textarea>
+          <button class="btn full" id="completeSession">Valider ma séance</button>
+          <p class="sub" style="margin-top:10px">La séance est comptabilisée lorsque les 4 étapes sont cochées.</p>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-path">
+        <div class="heading-row"><div><div class="date-label">LEARNING PATH</div><h1>Ton parcours</h1><p class="sub">Un chemin progressif, sans brûler les étapes.</p></div></div>
+        <div class="card">
+          <div class="eyebrow">Cycle 01 · Fondations</div><h2 style="font-size:20px;margin:7px 0">Comprendre l'harmonie</h2><p class="sub">Le premier cycle transforme tes réflexes d'oreille en repères musicaux utilisables.</p>
+          <div class="progress-track" style="margin-top:14px"><div class="progress-fill" id="pathBar"></div></div>
+          <p class="sub" id="pathText" style="margin-top:8px">0 compétence validée sur 6</p>
+        </div>
+        <div class="card">
+          <div class="module"><div class="module-icon">01</div><div class="module-body"><strong>Arpèges majeurs</strong><small>1 – 3 – 5 · comprendre et jouer</small></div><span class="tag green">En cours</span></div>
+          <div class="module"><div class="module-icon">02</div><div class="module-body"><strong>Arpèges mineurs</strong><small>1 – ♭3 – 5 · entendre la tierce</small></div><span class="status">À travailler</span></div>
+          <div class="module"><div class="module-icon">03</div><div class="module-body"><strong>Arpèges de septième</strong><small>Maj7, min7 et dominante 7</small></div><span class="status">À venir</span></div>
+          <div class="module"><div class="module-icon">04</div><div class="module-body"><strong>Intervalles et manche</strong><small>Retrouver les notes sur 5 cordes</small></div><span class="status">À venir</span></div>
+          <div class="module"><div class="module-icon">05</div><div class="module-body"><strong>Notes de passage</strong><small>Relier les accords avec intention</small></div><span class="status">À venir</span></div>
+          <div class="module"><div class="module-icon">06</div><div class="module-body"><strong>Créer des lignes</strong><small>Trois propositions sur une progression</small></div><span class="status">À venir</span></div>
+        </div>
+        <div class="card"><span class="eyebrow">Principe de validation</span><p class="sub" style="margin-top:8px">Une compétence ne sera considérée comme acquise que lorsque tu peux l'expliquer, l'exécuter proprement et l'utiliser sur une progression musicale. Cocher une séance ne suffit pas à valider une compétence.</p></div>
+      </section>
+
+      <section class="screen" id="screen-songs">
+        <div class="heading-row"><div><div class="date-label">SONG LAB</div><h1>Ton répertoire</h1><p class="sub">Transforme les chansons que tu connais en terrain d'entraînement.</p></div></div>
+        <div class="card">
+          <h3 style="margin:0 0 12px;font-size:14px">Ajouter une chanson</h3>
+          <label class="form-label" for="songTitle">Titre de la chanson</label><input id="songTitle" class="field" placeholder="Ex. : Way Maker" maxlength="70">
+          <label class="form-label" for="songArtist">Artiste</label><input id="songArtist" class="field" placeholder="Nom de l'artiste / groupe" maxlength="70">
+          <label class="form-label" for="songKey">Tonalité (si connue)</label><select id="songKey" class="field"><option value="">Je ne sais pas encore</option><option>C</option><option>C# / Db</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F# / Gb</option><option>G</option><option>Ab</option><option>A</option><option>Bb</option><option>B</option></select>
+          <button class="btn full" id="addSong">Ajouter au répertoire +</button>
+        </div>
+        <div class="section-title"><h3>Chansons à travailler</h3><span class="status" id="songCount">0 TITRE</span></div>
+        <div class="card" id="songList"><div class="empty">Ton répertoire est vide. Ajoute une chanson que tu joues déjà.</div></div>
+        <p class="sub">V1 : les titres sont enregistrés sur cet appareil. L'analyse automatique des accords viendra dans une version ultérieure.</p>
+      </section>
+
+      <section class="screen" id="screen-progress">
+        <div class="heading-row"><div><div class="date-label">PROGRESS TRACKER</div><h1>Ta progression</h1><p class="sub">Mesure la pratique réelle, pas seulement les jours ouverts.</p></div></div>
+        <div class="stats">
+          <div class="stat"><strong id="pSessions">0</strong><span>Séances</span></div>
+          <div class="stat"><strong id="pMinutes">0</strong><span>Minutes</span></div>
+          <div class="stat"><strong id="pSongs">0</strong><span>Chansons</span></div>
+        </div>
+        <div class="section-title"><h3>Historique des séances</h3><span class="status">LOCAL</span></div>
+        <div class="card" id="historyList"><div class="empty">Tes séances validées apparaîtront ici.</div></div>
+        <div class="section-title"><h3>Ton profil musical</h3></div>
+        <div class="card">
+          <div class="module"><div class="module-body"><strong>Niveau de départ</strong><small>Intermédiaire autodidacte</small></div></div>
+          <div class="module"><div class="module-body"><strong>Instrument</strong><small>Basse électrique 5 cordes · B – E – A – D – G</small></div></div>
+          <div class="module"><div class="module-body"><strong>Rythme cible</strong><small>15 minutes · 3 à 4 séances par semaine</small></div></div>
+          <div class="module"><div class="module-body"><strong>Styles prioritaires</strong><small>Gospel, Worship, Afrobeat, Afro-gospel, R&B, Soul, Neo-soul, Jazz et Blues</small></div></div>
+        </div>
+        <button class="btn secondary full" id="exportData">Exporter mes données (JSON)</button>
+      </section>
+
+      <div class="footer-note">BASSLAB V1 · BUILT FOR YOUR PROGRESS</div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+<script>
+(() => {
+  const KEY = "basslab_v1_data";
+  const today = () => new Date().toISOString().slice(0,10);
+  const defaultData = {sessions:[],songs:[],taskChecks:{},reflection:""};
+  let data;
+  try { data = {...defaultData, ...JSON.parse(localStorage.getItem(KEY) || "{}")}; } catch(e) { data = {...defaultData}; }
+  const save = () => localStorage.setItem(KEY, JSON.stringify(data));
+  const $ = id => document.getElementById(id);
+  const toast = msg => { const el=$("toast"); el.textContent=msg; el.style.display="block"; clearTimeout(toast.t); toast.t=setTimeout(()=>el.style.display="none",2200); };
+  const dateFmt = d => new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"});
+  function go(screen){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="screen-"+screen));document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===screen));window.scrollTo({top:0,behavior:"smooth"});render();}
+  document.querySelectorAll("[data-screen]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.screen)));
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+  $("todayLabel").textContent = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
+
+  document.querySelectorAll(".task-check").forEach(ch=>{
+    ch.checked=!!data.taskChecks[ch.dataset.task];
+    ch.addEventListener("change",()=>{
+      data.taskChecks[ch.dataset.task]=ch.checked;
+      data.reflection=$("reflection").value;
+      save(); updatePractice();
+    });
+  });
+  $("reflection").value=data.reflection||"";
+  $("reflection").addEventListener("input",()=>{data.reflection=$("reflection").value;save();});
+  function updatePractice(){
+    const checks=[...document.querySelectorAll(".task-check")];
+    const n=checks.filter(c=>c.checked).length, pct=Math.round(n/checks.length*100);
+    $("taskCount").textContent=n+" / 4 étapes";$("practicePct").textContent=pct+"%";$("practiceBar").style.width=pct+"%";
+    checks.forEach(c=>c.closest(".task-row").classList.toggle("done",c.checked));
+  }
+  $("completeSession").addEventListener("click",()=>{
+    const checks=[...document.querySelectorAll(".task-check")];
+    if(!checks.every(c=>c.checked)){toast("Termine les 4 étapes avant de valider.");return;}
+    if(data.sessions.some(s=>s.date===today())){toast("Cette séance est déjà validée aujourd'hui.");return;}
+    data.sessions.unshift({date:today(),minutes:15,reflection:$("reflection").value.trim(),type:"Arpèges majeurs et mineurs"});
+    data.taskChecks={};data.reflection="";save();
+    document.querySelectorAll(".task-check").forEach(c=>{c.checked=false;c.closest(".task-row").classList.remove("done");});
+    $("reflection").value="";updatePractice();render();toast("Séance enregistrée. Beau travail !");
+  });
+  $("addSong").addEventListener("click",()=>{
+    const title=$("songTitle").value.trim(),artist=$("songArtist").value.trim(),key=$("songKey").value;
+    if(!title){toast("Ajoute au moins le titre de la chanson.");$("songTitle").focus();return;}
+    data.songs.push({id:Date.now(),title,artist,key});save();
+    $("songTitle").value="";$("songArtist").value="";$("songKey").value="";
+    render();toast("Chanson ajoutée au répertoire.");
+  });
+  function renderSongs(){
+    $("songCount").textContent=data.songs.length+" TITRE"+(data.songs.length>1?"S":"");
+    const list=$("songList");
+    if(!data.songs.length){list.innerHTML='<div class="empty">Ton répertoire est vide. Ajoute une chanson que tu joues déjà.</div>';return;}
+    list.innerHTML="";
+    data.songs.forEach(song=>{
+      const row=document.createElement("div");row.className="song";
+      const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=song.title;
+      const small=document.createElement("small");small.textContent=[song.artist||"Artiste non renseigné",song.key?"Tonalité : "+song.key:"Tonalité inconnue"].join(" · ");
+      info.append(strong,small);const del=document.createElement("button");del.className="icon-btn";del.style.width="34px";del.style.height="34px";del.textContent="×";del.setAttribute("aria-label","Supprimer "+song.title);
+      del.addEventListener("click",()=>{data.songs=data.songs.filter(s=>s.id!==song.id);save();renderSongs();renderStats();toast("Chanson supprimée.");});
+      row.append(info,del);list.append(row);
+    });
+  }
+  function renderHistory(){
+    const box=$("historyList");if(!data.sessions.length){box.innerHTML='<div class="empty">Tes séances validées apparaîtront ici.</div>';return;}
+    box.innerHTML="";
+    data.sessions.slice(0,12).forEach(s=>{
+      const row=document.createElement("div");row.className="song";
+      const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=s.type;
+      const small=document.createElement("small");small.textContent=dateFmt(s.date)+(s.reflection?" · "+s.reflection:"");
+      info.append(strong,small);const tag=document.createElement("span");tag.className="tag green";tag.textContent=s.minutes+" min";row.append(info,tag);box.append(row);
+    });
+  }
+  function renderStats(){
+    const sessions=data.sessions.length,minutes=data.sessions.reduce((a,s)=>a+(s.minutes||0),0),skills=sessions?Math.min(16,Math.round(sessions/6*100)):0;
+    $("statSessions").textContent=sessions;$("statMinutes").textContent=minutes;$("statSkills").textContent=skills+"%";
+    $("pSessions").textContent=sessions;$("pMinutes").textContent=minutes;$("pSongs").textContent=data.songs.length;
+    $("foundationPct").textContent=skills+"%";$("foundationBar").style.width=skills+"%";
+    $("pathBar").style.width=skills+"%";$("pathText").textContent=Math.min(1,Math.floor(sessions/6))+" compétence validée sur 6 · "+sessions+" séance(s) effectuée(s)";
+  }
+  function render(){renderStats();renderSongs();renderHistory();updatePractice();}
+  $("exportData").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="basslab-backup-"+today()+".json";a.click();URL.revokeObjectURL(url);toast("Export prêt.");
+  });
+  $("resetBtn").addEventListener("click",()=>{
+    if(!confirm("Effacer toutes les données BassLab enregistrées sur cet appareil ? Cette action est irréversible."))return;
+    localStorage.removeItem(KEY);data={...defaultData};document.querySelectorAll(".task-check").forEach(c=>c.checked=false);$("reflection").value="";render();toast("Données réinitialisées.");
+  });
+  render();
+  if("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+})();
+</script>
+</body>
+</html>
