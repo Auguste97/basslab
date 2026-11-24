@@ -1,255 +1,245 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#101112">
-  <meta name="description" content="BassLab — ton système personnel de progression à la basse.">
-  <title>BassLab</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.svg">
-  <style>
-    :root{color-scheme:dark;--bg:#101112;--panel:#191b1d;--panel2:#202326;--line:#2b2f32;--muted:#92999d;--text:#f2f4f3;--green:#b7f36b;--green2:#8dc94d;--orange:#f2b66d;--red:#ff827c;--radius:18px}
-    *{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-    button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}
-    .app{max-width:760px;margin:0 auto;padding:0 17px}.topbar{height:70px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(16,17,18,.94);backdrop-filter:blur(16px);z-index:5}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:.13em;font-size:15px}.brand-mark{width:30px;height:30px;border-radius:10px;background:var(--green);color:#121510;display:grid;place-items:center;font-weight:950;font-size:17px}
-    .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750}.icon-btn{width:39px;height:39px;border:1px solid var(--line);background:var(--panel);border-radius:13px;color:var(--text);font-size:17px}
-    main{padding:23px 0 28px}.screen{display:none}.screen.active{display:block}.heading-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}.heading-row h1{font-size:27px;line-height:1.1;margin:5px 0 7px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:13px;margin:0}.date-label{color:var(--green);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:17px;margin-bottom:13px}.hero{background:linear-gradient(135deg,#202a1b,#191d18 62%,#191b1d);border-color:#39472d;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:180px;height:180px;border:1px solid rgba(183,243,107,.12);border-radius:50%;right:-65px;top:-75px;box-shadow:0 0 0 22px rgba(183,243,107,.025),0 0 0 45px rgba(183,243,107,.02)}
-    .hero h2{font-size:23px;line-height:1.15;letter-spacing:-.035em;margin:8px 0}.hero p{color:#b8c1b1;max-width:360px;font-size:13px;margin:0 0 17px}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:99px;background:rgba(183,243,107,.12);color:var(--green);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-    .btn{border:0;border-radius:12px;padding:12px 15px;background:var(--green);color:#141810;font-weight:850;font-size:13px}.btn:active{transform:scale(.98)}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn.ghost{background:transparent;color:var(--green);border:1px solid #46543b}.btn.full{width:100%}
-    .section-title{display:flex;align-items:center;justify-content:space-between;margin:22px 1px 11px}.section-title h3{margin:0;font-size:15px;letter-spacing:-.02em}.text-link{border:0;background:none;color:var(--green);font-size:12px;font-weight:750;padding:5px}
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px}.stat strong{display:block;font-size:22px;letter-spacing:-.04em}.stat span{font-size:10px;color:var(--muted)}
-    .progress-track{height:7px;border-radius:20px;background:#303538;overflow:hidden}.progress-fill{height:100%;width:0;background:var(--green);border-radius:20px;transition:width .2s}
-    .task-row{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid var(--line)}.task-row:last-child{border:0;padding-bottom:0}.check{appearance:none;width:21px;height:21px;flex:0 0 21px;border:1.5px solid #68716d;border-radius:7px;margin:1px 0 0;background:transparent;position:relative}.check:checked{background:var(--green);border-color:var(--green)}.check:checked:after{content:"✓";position:absolute;color:#151a11;font-size:14px;font-weight:900;left:4px;top:-1px}
-    .task-main{flex:1}.task-main strong{display:block;font-size:13px}.task-main small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.task-row.done .task-main strong{text-decoration:line-through;color:var(--muted)}
-    .meta-row{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.tag{font-size:10px;color:#c3c9c5;background:#292e30;border-radius:7px;padding:5px 8px}.tag.green{color:var(--green);background:rgba(183,243,107,.1)}
-    .session-step{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:14px;margin:10px 0}.step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.step-head strong{font-size:13px}.step-time{font-size:10px;color:var(--green);font-weight:800}.session-step p{font-size:12px;color:#b4bbb7;margin:8px 0 0}.notes{font-size:12px;color:#c4cbc6;background:#222725;border-radius:11px;padding:11px;margin-top:10px}
-    .tabs{position:fixed;z-index:10;bottom:0;left:0;right:0;background:rgba(20,22,23,.97);border-top:1px solid var(--line);padding:8px 7px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:2px;backdrop-filter:blur(15px)}.tab{border:0;background:transparent;color:#818987;min-width:0;flex:1;max-width:115px;padding:7px 2px;border-radius:12px;font-size:9px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}.tab .ico{font-size:18px;line-height:1.1}.tab.active{color:var(--green);background:rgba(183,243,107,.08)}
-    .module{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.module:last-child{border:0}.module-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:#282d2a;color:var(--green);font-size:17px}.module-body{flex:1}.module-body strong{font-size:13px;display:block}.module-body small{font-size:11px;color:var(--muted)}.status{font-size:10px;color:var(--muted)}
-    .field{width:100%;border:1px solid var(--line);border-radius:12px;background:#111415;color:var(--text);padding:12px;margin:6px 0 12px}.field::placeholder{color:#69716d}.form-label{font-size:11px;color:#b8c0bb;font-weight:750}.song{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.song:last-child{border:0}.song strong{font-size:13px;display:block}.song small{font-size:11px;color:var(--muted)}
-    .fret-wrap{overflow-x:auto;padding-bottom:8px}.fretboard{min-width:570px}.string-row{display:grid;grid-template-columns:45px repeat(13,1fr);align-items:center;min-height:36px;border-bottom:1px solid #4b5150}.string-name{font-size:10px;color:var(--muted);font-weight:800}.fret{height:34px;display:grid;place-items:center;border-right:1px solid #414746;font-size:10px;color:#7e8882;position:relative}.fret:first-of-type{border-left:2px solid #a6ada7}.note-dot{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#17200f;font-size:9px;font-weight:900;z-index:1}.fret-controls{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.select{background:#202526;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px;font-size:12px}
-    .empty{color:var(--muted);font-size:12px;text-align:center;padding:22px 10px}.footer-note{font-size:10px;color:#707975;text-align:center;padding:18px 0}.toast{position:fixed;z-index:30;bottom:95px;left:50%;transform:translateX(-50%);background:#e1f9c8;color:#17200f;border-radius:12px;padding:10px 15px;font-size:12px;font-weight:800;box-shadow:0 8px 30px #0008;display:none;white-space:nowrap}
-    @media(min-width:650px){.app{padding:0 25px}.topbar{height:78px}.tabs{position:sticky;bottom:auto;top:78px;border:1px solid var(--line);border-radius:15px;margin:14px auto 0;max-width:710px}.tab{flex-direction:row;justify-content:center;font-size:11px}.tab .ico{font-size:15px}body{padding-bottom:20px}main{padding-top:25px}}
-  </style>
-</head>
-<body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand"><div class="brand-mark">B</div><span>BASSLAB</span></div>
-      <button class="icon-btn" id="resetBtn" aria-label="Réinitialiser les données" title="Réinitialiser">↻</button>
-    </header>
-    <nav class="tabs" aria-label="Navigation principale">
-      <button class="tab active" data-screen="home"><span class="ico">⌂</span>Accueil</button>
-      <button class="tab" data-screen="practice"><span class="ico">◉</span>Pratique</button>
-      <button class="tab" data-screen="path"><span class="ico">▤</span>Parcours</button>
-      <button class="tab" data-screen="songs"><span class="ico">♫</span>Chansons</button>
-      <button class="tab" data-screen="progress"><span class="ico">↗</span>Progrès</button>
-    </nav>
-
-    <main>
-      <section class="screen active" id="screen-home">
-        <div class="heading-row">
-          <div><div class="date-label" id="todayLabel">TON ESPACE DE TRAVAIL</div><h1>Salut, bassiste.</h1><p class="sub">Construis ton vocabulaire. Une séance à la fois.</p></div>
-          <span class="pill">V1 · 5 cordes</span>
-        </div>
-        <div class="card hero">
-          <span class="pill">Séance du jour · 15 min</span>
-          <h2>Les arpèges majeurs<br>et mineurs</h2>
-          <p>Apprends à utiliser les notes d'un accord pour construire des lignes de basse plus musicales.</p>
-          <button class="btn" data-go="practice">Commencer la séance&nbsp; →</button>
-        </div>
-        <div class="stats">
-          <div class="stat"><strong id="statSessions">0</strong><span>Séances validées</span></div>
-          <div class="stat"><strong id="statMinutes">0</strong><span>Minutes pratiquées</span></div>
-          <div class="stat"><strong id="statSkills">0%</strong><span>Parcours validé</span></div>
-        </div>
-        <div class="section-title"><h3>Ta progression</h3><button class="text-link" data-go="progress">Voir tout →</button></div>
-        <div class="card">
-          <div class="step-head"><strong>Fondations harmoniques</strong><strong id="foundationPct">0%</strong></div>
-          <div class="progress-track" style="margin-top:12px"><div class="progress-fill" id="foundationBar"></div></div>
-          <p class="sub" style="margin-top:10px">Objectif : comprendre et jouer les arpèges sur ta basse 5 cordes.</p>
-        </div>
-        <div class="section-title"><h3>Prochaine étape</h3><span class="status">TON PARCOURS</span></div>
-        <div class="card">
-          <div class="module"><div class="module-icon">①</div><div class="module-body"><strong>Arpèges majeurs</strong><small>1 – 3 – 5 · C, F, G, D</small></div><span class="tag green">En cours</span></div>
-          <div class="module"><div class="module-icon">②</div><div class="module-body"><strong>Arpèges mineurs</strong><small>1 – ♭3 – 5 · Am, Dm, Em</small></div><span class="status">À venir</span></div>
-          <div class="module"><div class="module-icon">③</div><div class="module-body"><strong>Créer une ligne</strong><small>Variation, rythme et application</small></div><span class="status">À venir</span></div>
-        </div>
-      </section>
-
-      <section class="screen" id="screen-practice">
-        <div class="heading-row"><div><div class="date-label">TODAY'S PRACTICE</div><h1>Ta séance</h1><p class="sub">Une séance courte, ciblée et appliquée.</p></div><span class="pill">15 MIN</span></div>
-        <div class="card">
-          <span class="eyebrow">Objectif du jour</span><h2 style="font-size:20px;margin:7px 0">Jouer les arpèges majeurs et mineurs</h2>
-          <p class="sub">À la fin, tu dois pouvoir jouer les notes d'un accord dans l'ordre, puis créer une variation simple.</p>
-          <div class="meta-row"><span class="tag">Basse 5 cordes</span><span class="tag">Départ : 60 BPM</span><span class="tag green">Harmonie</span></div>
-        </div>
-        <div class="section-title"><h3>Déroulement</h3><span class="status" id="taskCount">0 / 4 étapes</span></div>
-        <div id="practiceTasks">
-          <div class="session-step"><div class="step-head"><strong>01 · Mise en route</strong><span class="step-time">2 MIN</span></div><p>Accorde ta basse. Joue lentement les notes C – E – G – C, puis redescends. Cherche un son régulier.</p><label class="task-row"><input class="check task-check" type="checkbox" data-task="0"><span class="task-main"><strong>Je suis prêt et mes notes sont propres.</strong><small>Pas de cordes parasites, pas de précipitation.</small></span></label></div>
-          <div class="session-step"><div class="step-head"><strong>02 · Arpèges majeurs</strong><span class="step-time">4 MIN</span></div><p>Joue C – E – G – C, F – A – C – F, G – B – D – G. Une note par battement à 60 BPM.</p><div class="notes">Formule : fondamentale – tierce majeure – quinte – octave. Chante les notes si possible.</div><label class="task-row"><input class="check task-check" type="checkbox" data-task="1"><span class="task-main"><strong>Je peux jouer les trois arpèges sans m'arrêter.</strong><small>La justesse et la régularité avant la vitesse.</small></span></label></div>
-          <div class="session-step"><div class="step-head"><strong>03 · Arpèges mineurs</strong><span class="step-time">4 MIN</span></div><p>Joue Am : A – C – E – A, Dm : D – F – A – D, Em : E – G – B – E.</p><div class="notes">Formule : fondamentale – tierce mineure – quinte – octave. Écoute la différence avec le majeur.</div><label class="task-row"><input class="check task-check" type="checkbox" data-task="2"><span class="task-main"><strong>J'entends et je joue la différence majeur / mineur.</strong><small>La tierce change la couleur de l'accord.</small></span></label></div>
-          <div class="session-step"><div class="step-head"><strong>04 · Application musicale</strong><span class="step-time">5 MIN</span></div><p>Sur la progression C – Am – F – G : premier tour avec les fondamentales, deuxième tour avec les arpèges, troisième tour avec ton propre ordre de notes.</p><div class="notes">Défi : crée deux lignes différentes tout en gardant le même tempo et la même progression.</div><label class="task-row"><input class="check task-check" type="checkbox" data-task="3"><span class="task-main"><strong>J'ai créé deux lignes différentes sur la progression.</strong><small>Enregistre-toi si tu peux et réécoute le groove.</small></span></label></div>
-        </div>
-        <div class="card">
-          <div class="step-head"><strong>Validation de la séance</strong><span class="tag green" id="practicePct">0%</span></div>
-          <div class="progress-track" style="margin:12px 0"><div class="progress-fill" id="practiceBar"></div></div>
-          <label class="form-label" for="reflection">Une chose réussie / une difficulté à retenir</label>
-          <textarea id="reflection" class="field" rows="3" placeholder="Ex. : je confonds encore la tierce majeure et la tierce mineure..."></textarea>
-          <button class="btn full" id="completeSession">Valider ma séance</button>
-          <p class="sub" style="margin-top:10px">La séance est comptabilisée lorsque les 4 étapes sont cochées.</p>
-        </div>
-      </section>
-
-      <section class="screen" id="screen-path">
-        <div class="heading-row"><div><div class="date-label">LEARNING PATH</div><h1>Ton parcours</h1><p class="sub">Un chemin progressif, sans brûler les étapes.</p></div></div>
-        <div class="card">
-          <div class="eyebrow">Cycle 01 · Fondations</div><h2 style="font-size:20px;margin:7px 0">Comprendre l'harmonie</h2><p class="sub">Le premier cycle transforme tes réflexes d'oreille en repères musicaux utilisables.</p>
-          <div class="progress-track" style="margin-top:14px"><div class="progress-fill" id="pathBar"></div></div>
-          <p class="sub" id="pathText" style="margin-top:8px">0 compétence validée sur 6</p>
-        </div>
-        <div class="card">
-          <div class="module"><div class="module-icon">01</div><div class="module-body"><strong>Arpèges majeurs</strong><small>1 – 3 – 5 · comprendre et jouer</small></div><span class="tag green">En cours</span></div>
-          <div class="module"><div class="module-icon">02</div><div class="module-body"><strong>Arpèges mineurs</strong><small>1 – ♭3 – 5 · entendre la tierce</small></div><span class="status">À travailler</span></div>
-          <div class="module"><div class="module-icon">03</div><div class="module-body"><strong>Arpèges de septième</strong><small>Maj7, min7 et dominante 7</small></div><span class="status">À venir</span></div>
-          <div class="module"><div class="module-icon">04</div><div class="module-body"><strong>Intervalles et manche</strong><small>Retrouver les notes sur 5 cordes</small></div><span class="status">À venir</span></div>
-          <div class="module"><div class="module-icon">05</div><div class="module-body"><strong>Notes de passage</strong><small>Relier les accords avec intention</small></div><span class="status">À venir</span></div>
-          <div class="module"><div class="module-icon">06</div><div class="module-body"><strong>Créer des lignes</strong><small>Trois propositions sur une progression</small></div><span class="status">À venir</span></div>
-        </div>
-        <div class="card"><span class="eyebrow">Principe de validation</span><p class="sub" style="margin-top:8px">Une compétence ne sera considérée comme acquise que lorsque tu peux l'expliquer, l'exécuter proprement et l'utiliser sur une progression musicale. Cocher une séance ne suffit pas à valider une compétence.</p></div>
-      </section>
-
-      <section class="screen" id="screen-songs">
-        <div class="heading-row"><div><div class="date-label">SONG LAB</div><h1>Ton répertoire</h1><p class="sub">Transforme les chansons que tu connais en terrain d'entraînement.</p></div></div>
-        <div class="card">
-          <h3 style="margin:0 0 12px;font-size:14px">Ajouter une chanson</h3>
-          <label class="form-label" for="songTitle">Titre de la chanson</label><input id="songTitle" class="field" placeholder="Ex. : Way Maker" maxlength="70">
-          <label class="form-label" for="songArtist">Artiste</label><input id="songArtist" class="field" placeholder="Nom de l'artiste / groupe" maxlength="70">
-          <label class="form-label" for="songKey">Tonalité (si connue)</label><select id="songKey" class="field"><option value="">Je ne sais pas encore</option><option>C</option><option>C# / Db</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F# / Gb</option><option>G</option><option>Ab</option><option>A</option><option>Bb</option><option>B</option></select>
-          <button class="btn full" id="addSong">Ajouter au répertoire +</button>
-        </div>
-        <div class="section-title"><h3>Chansons à travailler</h3><span class="status" id="songCount">0 TITRE</span></div>
-        <div class="card" id="songList"><div class="empty">Ton répertoire est vide. Ajoute une chanson que tu joues déjà.</div></div>
-        <p class="sub">V1 : les titres sont enregistrés sur cet appareil. L'analyse automatique des accords viendra dans une version ultérieure.</p>
-      </section>
-
-      <section class="screen" id="screen-progress">
-        <div class="heading-row"><div><div class="date-label">PROGRESS TRACKER</div><h1>Ta progression</h1><p class="sub">Mesure la pratique réelle, pas seulement les jours ouverts.</p></div></div>
-        <div class="stats">
-          <div class="stat"><strong id="pSessions">0</strong><span>Séances</span></div>
-          <div class="stat"><strong id="pMinutes">0</strong><span>Minutes</span></div>
-          <div class="stat"><strong id="pSongs">0</strong><span>Chansons</span></div>
-        </div>
-        <div class="section-title"><h3>Historique des séances</h3><span class="status">LOCAL</span></div>
-        <div class="card" id="historyList"><div class="empty">Tes séances validées apparaîtront ici.</div></div>
-        <div class="section-title"><h3>Ton profil musical</h3></div>
-        <div class="card">
-          <div class="module"><div class="module-body"><strong>Niveau de départ</strong><small>Intermédiaire autodidacte</small></div></div>
-          <div class="module"><div class="module-body"><strong>Instrument</strong><small>Basse électrique 5 cordes · B – E – A – D – G</small></div></div>
-          <div class="module"><div class="module-body"><strong>Rythme cible</strong><small>15 minutes · 3 à 4 séances par semaine</small></div></div>
-          <div class="module"><div class="module-body"><strong>Styles prioritaires</strong><small>Gospel, Worship, Afrobeat, Afro-gospel, R&B, Soul, Neo-soul, Jazz et Blues</small></div></div>
-        </div>
-        <button class="btn secondary full" id="exportData">Exporter mes données (JSON)</button>
-      </section>
-
-      <div class="footer-note">BASSLAB V1 · BUILT FOR YOUR PROGRESS</div>
-    </main>
-  </div>
-  <div class="toast" id="toast" role="status"></div>
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0f"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<title>BassLab</title>
+<style>
+:root{--bg:#0d0d0f;--c1:#17171a;--c2:#222227;--ln:#2d2d33;--tx:#f3f1ee;--mu:#8d8d96;--ac:#ef6b5e;--ok:#5fcf9a;--am:#f2b84b}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 -apple-system,system-ui,"Segoe UI",sans-serif}
+#app{max-width:480px;margin:auto;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(96px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:active{transform:scale(.97)}
+h1{font-size:28px;line-height:1.15;letter-spacing:-.02em}h2{font-size:21px;margin:6px 0}h3{font-size:16px}
+.mu,small{color:var(--mu)}.in{animation:in .3s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.card{background:var(--c1);border:1px solid var(--ln);border-radius:20px;padding:16px;margin:12px 0}
+.hd{padding:10px 2px 6px}
+.hero{background:linear-gradient(135deg,#ef6b5e,#c4463b);border:0;color:#fff}
+.hero p{opacity:.85}.hero h2{font-size:24px}
+.btn{display:block;width:100%;background:var(--ac);color:#fff;border-radius:14px;padding:14px;font-weight:650;text-align:center}
+.hero .btn{background:#fff;color:#b13a30;margin-top:14px}
+.ghost{background:var(--c2);color:var(--tx);border-radius:14px;padding:14px;font-weight:600}
+button:disabled{opacity:.35}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.stats .card{margin:0;padding:14px 10px;text-align:center}.stats b{font-size:24px;display:block}
+.row{display:flex;gap:10px;align-items:center;justify-content:center}.row>*{flex:1}
+.ring{position:relative;width:64px;height:64px;flex:none}.ring svg{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:6;stroke-linecap:round}.rb{stroke:var(--c2)}.rf{stroke:var(--ac);animation:draw 1s ease}
+@keyframes draw{from{stroke-dasharray:0 163}}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:17px}
+.big{display:flex;gap:14px;align-items:center}
+.wk h3{margin:22px 2px 4px}.wk h3 span{color:var(--mu);font-weight:400;font-size:14px;margin-left:6px}
+.les{display:block;width:100%;text-align:left}.les .card{display:block}
+.bar{height:5px;border-radius:5px;background:var(--c2);margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);border-radius:5px}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,15,.92);backdrop-filter:blur(16px);border-top:1px solid var(--ln);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav>div{display:flex;width:100%;max-width:480px}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mu);padding:6px 0}
+nav button.on{color:var(--ac)}nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lesson nav{display:none}.lesson #app{padding-bottom:40px}
+.lh{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.ib{width:40px;height:40px;border-radius:50%;background:var(--c2);font-size:22px}
+.seg{display:flex;gap:4px;margin:6px 0 14px}.seg i{flex:1;height:4px;border-radius:4px;background:var(--c2)}.seg i.d{background:var(--ok)}.seg i.c{background:var(--ac)}
+.pill{display:inline-block;background:var(--c2);border-radius:20px;padding:2px 10px;font-size:13px;color:var(--mu)}
+.tx{color:#cfcdd2;margin:4px 0 8px}
+.fb{width:100%;display:block}.fb .st{stroke:#5a5a62}.fb .fr{stroke:#35353b;stroke-width:1.5}.fb .nut{stroke:#d9d6cf;stroke-width:4}
+.fb .mk{fill:#2a2a30}.fb text.fn{fill:var(--mu);font-size:10px;text-anchor:middle}.fb text.sl{fill:#4a4a52;font-size:11px;text-anchor:middle}
+.nt{opacity:.5;transition:opacity .15s;transform-box:fill-box;transform-origin:center;animation:pop .4s backwards;cursor:pointer}
+.nt circle{fill:#2b2b31;stroke:#77777f;stroke-width:1.2}.nt text{fill:#fff;font:600 10px system-ui;text-anchor:middle}
+.nt.rt circle{fill:var(--ac);stroke:none}.nt.ps circle{fill:var(--am);stroke:none}.nt.ps text{fill:#222}
+.nt.done{opacity:.85}.nt.on{opacity:1;transform:scale(1.18);animation:pulse .3s}.nt.on circle{filter:drop-shadow(0 0 7px var(--ac))}
+@keyframes pop{from{opacity:0;transform:scale(.3)}}@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.4)}}
+.gl{text-align:center;font-weight:650;margin-bottom:4px}
+.pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;justify-content:center;flex-wrap:wrap}
+.pills button{background:var(--c2);border-radius:20px;padding:4px 12px;font-size:14px;color:var(--mu)}.pills .on{background:var(--ac);color:#fff}
+.chips{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.chip{min-width:48px;text-align:center;background:var(--c2);border-radius:12px;padding:6px 8px;opacity:.6;transition:.15s}
+.chip b{display:block}.chip small{font-size:11px}.chip.on{opacity:1;background:var(--ac);transform:translateY(-3px)}.chip.on small{color:#fff}
+.ctl{display:flex;gap:16px;align-items:center;margin:14px 0}
+.play{width:64px;height:64px;border-radius:50%;background:var(--ac);display:grid;place-items:center;flex:none;box-shadow:0 6px 20px rgba(239,107,94,.35)}
+.play svg{width:26px;height:26px;fill:#fff}
+.bp{flex:1;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}.bp input{flex:1 0 100%}input[type=range]{accent-color:var(--ac);width:100%}
+.nav2{display:flex;gap:10px;margin-top:16px}.nav2 .btn{flex:2}.nav2 .ghost{flex:1}
+.ck{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 0;border-bottom:1px solid var(--ln)}
+.ck i{width:24px;height:24px;border-radius:8px;border:2px solid var(--mu);flex:none;display:grid;place-items:center;font-style:normal;color:#0d0d0f}
+.ck.on i{background:var(--ok);border-color:var(--ok)}
+.seg2{display:flex;background:var(--c1);border-radius:14px;padding:4px;margin:6px 0 10px}
+.seg2 button{flex:1;padding:9px;border-radius:11px;color:var(--mu);font-weight:600}.seg2 .on{background:var(--c2);color:var(--tx)}
+.cen{text-align:center}.num{font-size:84px;font-weight:700;letter-spacing:-.04em;line-height:1}
+.dots{display:flex;gap:12px;justify-content:center;margin:14px 0}.dot{width:16px;height:16px;border-radius:50%;background:var(--c2);transition:.08s}.dot.on{background:var(--ac);transform:scale(1.3)}
+.rd{width:56px;height:56px;border-radius:50%;background:var(--c2);font-size:26px}
+select,input[type=text]{background:var(--c2);color:var(--tx);border:1px solid var(--ln);border-radius:12px;padding:12px;font:inherit;width:100%}
+.tnn{font-size:72px;font-weight:700;line-height:1.1}.mtr{position:relative;height:10px;border-radius:10px;background:var(--c2);margin:18px 6px}
+.mtr:after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:var(--mu)}
+.mtr i{position:absolute;top:-5px;width:6px;height:20px;border-radius:4px;background:var(--ac);transform:translateX(-50%);transition:left .12s}.mtr.ok i{background:var(--ok)}
+.strs{display:flex;gap:8px;margin-top:14px}.strs button{flex:1;padding:14px 0;border-radius:14px;background:var(--c2);font-weight:700;font-size:18px}.strs .ok{background:var(--ok);color:#0d0d0f}
+.sg{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.tag{border-radius:20px;padding:3px 12px;font-size:13px;background:var(--c2)}.tag.s1{background:#4a3a1c;color:var(--am)}.tag.s2{background:#1d3d2f;color:var(--ok)}
+.cols{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:10px}.cols div{flex:1;text-align:center;font-size:12px;color:var(--mu)}.cols i{display:block;background:var(--ac);border-radius:6px 6px 0 0;min-height:3px;margin-bottom:4px;transition:height .6s}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 18px;border-radius:20px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:9}#toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="app"><main id="view"></main></div>
+<nav><div id="tabs"></div></nav><div id="toast"></div>
 <script>
-(() => {
-  const KEY = "basslab_v1_data";
-  const today = () => new Date().toISOString().slice(0,10);
-  const defaultData = {sessions:[],songs:[],taskChecks:{},reflection:""};
-  let data;
-  try { data = {...defaultData, ...JSON.parse(localStorage.getItem(KEY) || "{}")}; } catch(e) { data = {...defaultData}; }
-  const save = () => localStorage.setItem(KEY, JSON.stringify(data));
-  const $ = id => document.getElementById(id);
-  const toast = msg => { const el=$("toast"); el.textContent=msg; el.style.display="block"; clearTimeout(toast.t); toast.t=setTimeout(()=>el.style.display="none",2200); };
-  const dateFmt = d => new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"});
-  function go(screen){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="screen-"+screen));document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===screen));window.scrollTo({top:0,behavior:"smooth"});render();}
-  document.querySelectorAll("[data-screen]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.screen)));
-  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
-  $("todayLabel").textContent = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
-
-  document.querySelectorAll(".task-check").forEach(ch=>{
-    ch.checked=!!data.taskChecks[ch.dataset.task];
-    ch.addEventListener("change",()=>{
-      data.taskChecks[ch.dataset.task]=ch.checked;
-      data.reflection=$("reflection").value;
-      save(); updatePractice();
-    });
-  });
-  $("reflection").value=data.reflection||"";
-  $("reflection").addEventListener("input",()=>{data.reflection=$("reflection").value;save();});
-  function updatePractice(){
-    const checks=[...document.querySelectorAll(".task-check")];
-    const n=checks.filter(c=>c.checked).length, pct=Math.round(n/checks.length*100);
-    $("taskCount").textContent=n+" / 4 étapes";$("practicePct").textContent=pct+"%";$("practiceBar").style.width=pct+"%";
-    checks.forEach(c=>c.closest(".task-row").classList.toggle("done",c.checked));
-  }
-  $("completeSession").addEventListener("click",()=>{
-    const checks=[...document.querySelectorAll(".task-check")];
-    if(!checks.every(c=>c.checked)){toast("Termine les 4 étapes avant de valider.");return;}
-    if(data.sessions.some(s=>s.date===today())){toast("Cette séance est déjà validée aujourd'hui.");return;}
-    data.sessions.unshift({date:today(),minutes:15,reflection:$("reflection").value.trim(),type:"Arpèges majeurs et mineurs"});
-    data.taskChecks={};data.reflection="";save();
-    document.querySelectorAll(".task-check").forEach(c=>{c.checked=false;c.closest(".task-row").classList.remove("done");});
-    $("reflection").value="";updatePractice();render();toast("Séance enregistrée. Beau travail !");
-  });
-  $("addSong").addEventListener("click",()=>{
-    const title=$("songTitle").value.trim(),artist=$("songArtist").value.trim(),key=$("songKey").value;
-    if(!title){toast("Ajoute au moins le titre de la chanson.");$("songTitle").focus();return;}
-    data.songs.push({id:Date.now(),title,artist,key});save();
-    $("songTitle").value="";$("songArtist").value="";$("songKey").value="";
-    render();toast("Chanson ajoutée au répertoire.");
-  });
-  function renderSongs(){
-    $("songCount").textContent=data.songs.length+" TITRE"+(data.songs.length>1?"S":"");
-    const list=$("songList");
-    if(!data.songs.length){list.innerHTML='<div class="empty">Ton répertoire est vide. Ajoute une chanson que tu joues déjà.</div>';return;}
-    list.innerHTML="";
-    data.songs.forEach(song=>{
-      const row=document.createElement("div");row.className="song";
-      const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=song.title;
-      const small=document.createElement("small");small.textContent=[song.artist||"Artiste non renseigné",song.key?"Tonalité : "+song.key:"Tonalité inconnue"].join(" · ");
-      info.append(strong,small);const del=document.createElement("button");del.className="icon-btn";del.style.width="34px";del.style.height="34px";del.textContent="×";del.setAttribute("aria-label","Supprimer "+song.title);
-      del.addEventListener("click",()=>{data.songs=data.songs.filter(s=>s.id!==song.id);save();renderSongs();renderStats();toast("Chanson supprimée.");});
-      row.append(info,del);list.append(row);
-    });
-  }
-  function renderHistory(){
-    const box=$("historyList");if(!data.sessions.length){box.innerHTML='<div class="empty">Tes séances validées apparaîtront ici.</div>';return;}
-    box.innerHTML="";
-    data.sessions.slice(0,12).forEach(s=>{
-      const row=document.createElement("div");row.className="song";
-      const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=s.type;
-      const small=document.createElement("small");small.textContent=dateFmt(s.date)+(s.reflection?" · "+s.reflection:"");
-      info.append(strong,small);const tag=document.createElement("span");tag.className="tag green";tag.textContent=s.minutes+" min";row.append(info,tag);box.append(row);
-    });
-  }
-  function renderStats(){
-    const sessions=data.sessions.length,minutes=data.sessions.reduce((a,s)=>a+(s.minutes||0),0),skills=sessions?Math.min(16,Math.round(sessions/6*100)):0;
-    $("statSessions").textContent=sessions;$("statMinutes").textContent=minutes;$("statSkills").textContent=skills+"%";
-    $("pSessions").textContent=sessions;$("pMinutes").textContent=minutes;$("pSongs").textContent=data.songs.length;
-    $("foundationPct").textContent=skills+"%";$("foundationBar").style.width=skills+"%";
-    $("pathBar").style.width=skills+"%";$("pathText").textContent=Math.min(1,Math.floor(sessions/6))+" compétence validée sur 6 · "+sessions+" séance(s) effectuée(s)";
-  }
-  function render(){renderStats();renderSongs();renderHistory();updatePractice();}
-  $("exportData").addEventListener("click",()=>{
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-    a.href=url;a.download="basslab-backup-"+today()+".json";a.click();URL.revokeObjectURL(url);toast("Export prêt.");
-  });
-  $("resetBtn").addEventListener("click",()=>{
-    if(!confirm("Effacer toutes les données BassLab enregistrées sur cet appareil ? Cette action est irréversible."))return;
-    localStorage.removeItem(KEY);data={...defaultData};document.querySelectorAll(".task-check").forEach(c=>c.checked=false);$("reflection").value="";render();toast("Données réinitialisées.");
-  });
-  render();
-  if("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
-})();
-</script>
-</body>
-</html>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const K='basslab.v2';let S;try{S=JSON.parse(localStorage[K])}catch(e){}
+S=Object.assign({sess:[],mast:{},songs:[]},S||{});const save=()=>{try{localStorage[K]=JSON.stringify(S)}catch(e){}};
+/* ---------- Théorie & manche (5 cordes : index 0=Si ... 4=Sol) ---------- */
+const OPEN=[23,28,33,38,43],SN=['Si','Mi','La','Ré','Sol'],NN=['Do','Do#','Ré','Mib','Mi','Fa','Fa#','Sol','Lab','La','Sib','Si'];
+const DG=['R','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'],deg=d=>d==12?'8':DG[((d%12)+12)%12];
+const LET={C:0,D:2,E:4,F:5,G:7,A:9,B:11},nm=n=>{const m=n.match(/^([A-G])([b#]?)(\d)$/);return LET[m[1]]+(m[2]=='#'?1:m[2]=='b'?-1:0)+12*(+m[3]+1)};
+function place1(m,a,ps){let b;OPEN.forEach((o,s)=>{const f=m-o;if(f<0||f>9)return;const c=Math.abs(f-a)+(ps>=0?Math.abs(s-ps-1)*.6:0);if(!b||c<b.c)b={s,f,m,c}});return b}
+function parse(g){let ps=-1;g.p=g.n.split(' ').map(t=>{const p=t[0]=='~';if(p)t=t.slice(1);let o;if(/^\d:/.test(t)){const[s,f]=t.split(':').map(Number);o={s,f,m:OPEN[s]+f}}else o=place1(nm(t),g.a||0,ps);ps=o.s;return Object.assign({},o,{p})});g.rt=g.r?nm(g.r):g.p[0].m;return g}
+const G=(l,n,a,r)=>parse({l,n,a,r}),S_=(t,m,x,g,b)=>({t,m,x,g,b:b||60});
+/* ---------- Parcours ---------- */
+const DO=G('Do','C2 E2 G2 C3',3),AM=G('La mineur','A1 C2 E2 A2',0),FA=G('Fa','F1 A1 C2 F2',1),SO=G('Sol','G1 B1 D2 G2',3),PR=[DO,AM,FA,SO];
+const P7=[G('Do maj7','C2 E2 G2 B2',3),G('La min7','A1 C2 E2 G2',0),G('Ré min7','D2 F2 A2 C3',3),G('Sol 7','G1 B1 D2 F2',3)];
+const WK={1:'Arpèges fondamentaux',2:'Arpèges de septième',3:'Passages et transitions',4:'Création de lignes'};
+const L=[
+{id:'1a',w:1,t:'Trouver les notes',d:'Le manche de ta 5 cordes',s:[
+S_('Les 5 cordes à vide',2,'De la plus grave à la plus aiguë : Si, Mi, La, Ré, Sol. Joue chaque corde à vide, une note par temps.',[G('Cordes à vide','B0 E1 A1 D2 G2')],50),
+S_('Monter sur la corde de La',4,'Chaque case vaut un demi-ton. Sur la corde de La, les notes naturelles sont aux cases 0, 2, 3, 5, 7 et 8.',[G('Corde de La','2:0 2:2 2:3 2:5 2:7 2:8')],60),
+S_('Un Do, quatre endroits',4,'Une même note existe à plusieurs endroits. Retrouve tous les Do : c’est la clé pour ne plus se perdre sur le manche.',[G('Les Do du manche','2:3 1:8 4:5 3:10')],50)]},
+{id:'1b',w:1,t:'Arpège majeur',d:'Fondamentale, tierce, quinte, octave',s:[
+S_('La formule 1 – 3 – 5 – 8',3,'Un arpège majeur combine la fondamentale, la tierce majeure (4 demi-tons), la quinte (7 demi-tons) et l’octave. Regarde la forme, puis joue avec l’animation.',[G('Do majeur','C2 E2 G2 C3',3)],60),
+S_('Do, Fa, Sol',5,'Même formule, trois points de départ. Une note par temps à 60 BPM : cherche un son propre et régulier.',[DO,FA,SO],60)]},
+{id:'1c',w:1,t:'Arpège mineur',d:'Entendre la tierce mineure',s:[
+S_('Un demi-ton change tout',3,'La tierce mineure est un cran plus bas (3 demi-tons). Compare Do majeur et Do mineur : la couleur devient plus sombre.',[G('Do majeur','C2 E2 G2 C3',3),G('Do mineur','C2 Eb2 G2 C3',3)],60),
+S_('La, Ré, Mi mineurs',5,'Formule : fondamentale, tierce mineure, quinte, octave. 60 BPM.',[AM,G('Ré mineur','D2 F2 A2 D3',3),G('Mi mineur','E1 G1 B1 E2',0)],60)]},
+{id:'1d',w:1,t:'Do – La mineur – Fa – Sol',d:'Ta première progression',s:[
+S_('Passage 1 : les fondamentales',2,'Joue seulement la racine de chaque accord. Toute la progression repose sur ces notes.',[G('Do','C2 C2 C3 C2',3),G('La mineur','A1 A1 A2 A1',0),G('Fa','F1 F1 F2 F1',1),G('Sol','G1 G1 G2 G1',3)],70),
+S_('Passage 2 : les arpèges',3,'Remplace chaque racine par l’arpège complet de l’accord.',PR,70),
+S_('Passage 3 : ton ordre',3,'Garde ces notes mais change leur ordre, ajoute des silences. Défi : invente deux lignes différentes sur la même progression.',PR,70)]},
+{id:'2a',w:2,t:'Maj7 et min7',d:'Deux couleurs douces',s:[
+S_('La septième majeure',4,'Maj7 = 1, 3, 5, 7. Un son ouvert et lumineux, typique du worship.',[P7[0],G('Fa maj7','F1 A1 C2 E2',1)],60),
+S_('La septième mineure',4,'Min7 = 1, ♭3, 5, ♭7. Plus chaud, très présent en soul et en neo-soul.',[P7[1],P7[2]],60)]},
+{id:'2b',w:2,t:'Septième de dominante',d:'La tension qui appelle la suite',s:[
+S_('1 – 3 – 5 – ♭7',4,'Le dominant 7 crée de la tension : c’est l’accord du degré V. Écoute comme Sol 7 veut retomber sur Do.',[P7[3],G('Do 7','C2 E2 G2 Bb2',3)],60)]},
+{id:'2c',w:2,t:'Progression worship',d:'Cmaj7 – Am7 – Dm7 – G7',s:[
+S_('Les quatre accords',5,'Un arpège par mesure. Cherche le chemin le plus court entre la dernière note et la suivante.',P7,70),
+S_('Ta version',5,'Change l’ordre, ajoute des silences, garde la fondamentale sur le premier temps.',P7,70)]},
+{id:'3a',w:3,t:'Notes de passage',d:'Relier les notes de l’arpège',s:[
+S_('Remplir les trous',4,'Une note de passage (en jaune) se place entre deux notes de l’accord, sur un temps faible. Elle ne reste jamais : elle mène vers la suivante.',[G('Do : 1 – 2 – 3 – 5','C2 ~D2 E2 G2',3),G('Do : 3 – 4 – 5 – 6','E2 ~F2 G2 ~A2',3)],70)]},
+{id:'3b',w:3,t:'Approches chromatiques',d:'Un demi-ton avant la cible',s:[
+S_('Par dessous, par dessus',5,'Joue une note à un demi-ton de la note visée, juste avant elle : la tension se résout aussitôt.',[G('Par dessous','C2 E2 ~F#2 G2',3),G('Par dessus','C2 E2 ~Ab2 G2',3)],70)]},
+{id:'3c',w:3,t:'Transitions et anticipations',d:'Enchaîner sans à-coups',s:[
+S_('Do vers La mineur',5,'Termine la mesure par une approche de la racine suivante. Anticipation : joue cette racine un demi-temps plus tôt, sur le « et » du dernier temps.',[G('Fin de mesure Do','C2 E2 G2 ~G#1',3),G('Arrivée sur La mineur','A1 C2 E2 A1',0)],70)]},
+{id:'4a',w:4,t:'Deux lignes, une progression',d:'Varier notes et rythmes',s:[
+S_('Ligne A : simple et groovy',5,'Racine, tierce, quinte. Laisse de l’espace et joue franchement sur les temps.',[G('Do','C2 E2 G2 E2',3),G('La mineur','A1 C2 E2 C2',0),G('Fa','F1 A1 C2 A1',1),G('Sol','G1 B1 D2 B1',3)],70),
+S_('Ligne B : plus mélodique',5,'Ajoute des notes de passage et change les rythmes. Compare avec la ligne A.',[G('Do','C2 E2 ~F#2 G2',3),G('La mineur','A1 C2 ~D2 E2',0),G('Fa','F1 A1 ~B1 C2',1),G('Sol','G1 ~A1 B1 D2',3)],70)]},
+{id:'4b',w:4,t:'Une vraie chanson',d:'Tout appliquer dans ton répertoire',s:[
+S_('Choisis ta chanson',5,'Ajoute une chanson dans l’onglet Chansons. Passage 1 : racines. Passage 2 : arpèges. Passage 3 : ta ligne, avec au moins une note de passage.',[],70),
+S_('Évalue-toi',3,'Enregistre-toi avec ton téléphone et réécoute : ta ligne varie-t-elle ? Note ce qui coince.',[],70)]}];
+const CR=['Je peux l’expliquer avec mes mots','Je la joue proprement','Je la retrouve à d’autres positions','Je l’utilise dans une progression','J’ai créé ma propre variation'];
+const mp=id=>(S.mast[id]||[]).filter(Boolean).length/5,mins=l=>l.s.reduce((a,s)=>a+s.m,0)+2;
+/* ---------- Audio ---------- */
+let ctx;const AC=()=>{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state=='suspended')ctx.resume();return ctx};
+function tone(m,d=.6){const c=AC(),t=c.currentTime,f=440*2**((m-69)/12),g=c.createGain(),lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=800;
+g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.5,t+.01);g.gain.exponentialRampToValueAtTime(.001,t+d);lp.connect(g);g.connect(c.destination);
+[[1,'sine',1],[2,'triangle',.4],[3,'sine',.15]].forEach(([k,ty,v])=>{const o=c.createOscillator(),gg=c.createGain();o.type=ty;o.frequency.value=f*k;gg.gain.value=v;o.connect(gg);gg.connect(lp);o.start(t);o.stop(t+d+.05)})}
+function click(t,acc){const c=AC(),o=c.createOscillator(),g=c.createGain();o.frequency.value=acc?1600:1000;g.gain.setValueAtTime(.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.06)}
+/* ---------- Manche SVG ---------- */
+function svgB(g){const X=f=>f?32+(f-.5)*30:16,Y=s=>22+(4-s)*26;let h='<svg class="fb" viewBox="0 0 330 160">';
+for(let s=0;s<5;s++)h+=`<line class="st" x1="32" x2="302" y1="${Y(s)}" y2="${Y(s)}" style="stroke-width:${(2.8-s*.45).toFixed(1)}"/><text class="sl" x="16" y="${Y(s)+4}">${SN[s]}</text>`;
+for(let f=0;f<=9;f++){h+=`<line class="${f?'fr':'nut'}" x1="${32+f*30}" x2="${32+f*30}" y1="22" y2="126"/>`;if(f)h+=`<text class="fn" x="${X(f)}" y="146">${f}</text>`}
+[3,5,7,9].forEach(f=>h+=`<circle class="mk" cx="${X(f)}" cy="74" r="4"/>`);
+g.p.forEach((o,i)=>{const rt=!o.p&&((o.m-g.rt)%12+12)%12==0;h+=`<g class="nt${o.p?' ps':rt?' rt':''}" data-a="pn" data-i="${i}" style="animation-delay:${i*70}ms"><circle cx="${X(o.f)}" cy="${Y(o.s)}" r="11"/><text x="${X(o.f)}" y="${Y(o.s)+3.5}">${NN[o.m%12]}</text></g>`});
+return h+'</svg>'}
+/* ---------- Lecture d'une leçon ---------- */
+const ui={t:'home',l:null,k:0,g:0,bpm:60,tl:'metro'},pl={on:false,tm:null,j:0};
+const lessonOf=()=>L.find(l=>l.id==ui.l),cur=()=>lessonOf().s[ui.k];
+const ICP='<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>',ICS='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+function hl(i){document.querySelectorAll('.nt,.chip').forEach(e=>{const k=+e.dataset.i;e.classList.toggle('on',k==i);if(e.classList.contains('nt'))e.classList.toggle('done',i>=0&&k<i)})}
+function drawBoard(){const b=$('#bd');if(!b)return;const gs=cur().g,g=gs[ui.g];
+b.innerHTML=(gs.length>1?`<div class="pills">${gs.map((x,i)=>`<button class="${i==ui.g?'on':''}" data-a="grp" data-i="${i}">${x.l}</button>`).join('')}</div>`:`<p class="gl">${g.l}</p>`)+svgB(g)+`<div class="chips">${g.p.map((o,i)=>`<div class="chip" data-i="${i}"><b>${NN[o.m%12]}</b><small>${deg(o.m-g.rt)}</small></div>`).join('')}</div>`}
+function plStop(){pl.on=false;clearTimeout(pl.tm);pl.j=0;hl(-1);const b=$('#pp');if(b)b.innerHTML=ICP}
+function plTick(){if(!pl.on)return;const gs=cur().g;if(pl.j>=gs[ui.g].p.length){pl.j=0;if(gs.length>1){ui.g=(ui.g+1)%gs.length;drawBoard()}}
+const o=gs[ui.g].p[pl.j];hl(pl.j);tone(o.m,60/ui.bpm*.95);pl.j++;pl.tm=setTimeout(plTick,60000/ui.bpm)}
+function lessonV(){const l=lessonOf(),n=l.s.length,fin=ui.k>=n,st=l.s[ui.k];
+let h=`<div class="lh"><button class="ib" data-a="back">‹</button><div><h3>${l.t}</h3><small>Semaine ${l.w} – ${WK[l.w]}</small></div></div><div class="seg">${[...Array(n+1)].map((_,i)=>`<i class="${i<ui.k?'d':i==ui.k?'c':''}"></i>`).join('')}</div>`;
+if(fin){const m=S.mast[l.id]||[];return h+`<h2>Bilan</h2><p class="tx">Coche seulement ce qui est vraiment acquis. Terminer une séance ne suffit pas : c’est la maîtrise qui compte.</p>${CR.map((c,i)=>`<button class="ck ${m[i]?'on':''}" data-a="ck" data-i="${i}"><i>${m[i]?'✓':''}</i>${c}</button>`).join('')}<div class="nav2"><button class="ghost" data-a="prev">Retour</button><button class="btn" data-a="done">Enregistrer la séance</button></div>`}
+h+=`<span class="pill">${st.m} min</span><h2>${st.t}</h2><p class="tx">${st.x}</p>`;
+if(st.g.length)h+=`<div class="card" id="bd"></div><div class="ctl"><button class="play" id="pp" data-a="pplay">${ICP}</button><div class="bp"><span>Tempo</span><b id="lbv">${ui.bpm}</b><span class="mu">BPM</span><input type="range" id="lb" min="40" max="140" value="${ui.bpm}"></div></div><p class="mu" style="font-size:14px">Touche une note du manche pour l’écouter. Doigtés proposés à titre indicatif : adapte-les à ta main.</p>`;
+else h+=`<div class="card mu">Cette étape se joue sur ta basse, sans diagramme.</div>`;
+return h+`<div class="nav2"><button class="ghost" data-a="prev" ${ui.k?'':'disabled'}>Retour</button><button class="btn" data-a="next">Suivant</button></div>`}
+/* ---------- Métronome ---------- */
+const mt={bpm:80,beats:4,on:false,i:0,nt:0,tm:null,taps:[]};
+function mtRun(){if(!mt.on)return;const now=ctx.currentTime;while(mt.nt<now+.12){const i=mt.i%mt.beats;click(mt.nt,i==0);setTimeout(()=>mt.on&&dots(i),Math.max(0,(mt.nt-now)*1000));mt.nt+=60/mt.bpm;mt.i++}mt.tm=setTimeout(mtRun,25)}
+function mtStop(){mt.on=false;clearTimeout(mt.tm);dots(-1)}
+const dots=i=>document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('on',k==i));
+function setBpm(v){mt.bpm=Math.max(30,Math.min(200,Math.round(v)));const a=$('#bpmv'),b=$('#bpm');if(a)a.textContent=mt.bpm;if(b)b.value=mt.bpm}
+/* ---------- Accordeur ---------- */
+const tn={on:false};
+function yin(b,sr){const W=4096,mx=Math.min(Math.floor(sr/28),b.length-W),mn=Math.floor(sr/500),d=new Float32Array(mx+1);let s=0;d[0]=1;
+for(let t=1;t<=mx;t++){let v=0;for(let i=0;i<W;i++){const x=b[i]-b[i+t];v+=x*x}s+=v;d[t]=v*t/s}
+for(let t=mn;t<mx;t++)if(d[t]<.12){while(t+1<mx&&d[t+1]<d[t])t++;return sr/t}return -1}
+async function tnStart(){try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}),c=AC(),an=c.createAnalyser();an.fftSize=8192;c.createMediaStreamSource(st).connect(an);
+const buf=new Float32Array(8192);tn.on=true;tn.st=st;$('#mic').textContent='Arrêter le micro';
+tn.iv=setInterval(()=>{an.getFloatTimeDomainData(buf);let r=0;for(let i=0;i<4096;i++)r+=buf[i]*buf[i];if(Math.sqrt(r/4096)<.008)return;const f=yin(buf,c.sampleRate);if(f<0)return;
+const m=69+12*Math.log2(f/440),n=Math.round(m),ce=Math.round((m-n)*100);
+$('#tn').textContent=NN[((n%12)+12)%12];$('#tf').textContent=f.toFixed(1)+' Hz · '+(ce>0?'+':'')+ce+' cents';
+const mm=$('#mtr');mm.firstChild.style.left=(50+Math.max(-50,Math.min(50,ce)))+'%';mm.classList.toggle('ok',Math.abs(ce)<6);
+document.querySelectorAll('.strs button').forEach((b,i)=>b.classList.toggle('ok',n==OPEN[i]&&Math.abs(ce)<6))},90)}
+catch(e){alert('Micro indisponible : autorise l’accès dans les réglages du navigateur.')}}
+function tnStop(){clearInterval(tn.iv);if(tn.st)tn.st.getTracks().forEach(t=>t.stop());tn.on=false;tn.st=null}
+/* ---------- Vues ---------- */
+const IC={home:'M4 11l8-7 8 7v9h-5v-6H9v6H4z',path:'M5 19h6a4 4 0 000-8H8a4 4 0 010-8h8',tools:'M8 21l2-17h4l2 17zM12 16l5-8',songs:'M9 18V5l11-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zM20 16a3 3 0 11-6 0 3 3 0 016 0z',prog:'M5 20V10M12 20V4M19 20v-7'};
+const TB=[['home','Accueil'],['path','Parcours'],['tools','Outils'],['songs','Chansons'],['prog','Progrès']];
+const week=()=>S.sess.filter(s=>s.t>Date.now()-6048e5).length,ring=p=>`<svg viewBox="0 0 64 64"><circle class="rb" cx="32" cy="32" r="26"/><circle class="rf" cx="32" cy="32" r="26" style="stroke-dasharray:${163*Math.min(p,1)} 163"/></svg>`;
+function homeV(){const h=new Date().getHours(),w=week(),tot=S.sess.reduce((a,s)=>a+s.min,0),ov=Math.round(L.reduce((a,l)=>a+mp(l.id),0)/L.length*100),nx=L.find(l=>mp(l.id)<1)||L[0];
+return `<div class="hd"><p class="mu">${h<5||h>=18?'Bonsoir':'Bonjour'}</p><h1>On joue un peu ?</h1></div>
+<div class="card hero"><p>Prochaine séance · ${mins(nx)} min</p><h2>${nx.t}</h2><p>${nx.d}</p><button class="btn" data-a="open" data-id="${nx.id}">Commencer</button></div>
+<div class="card big"><div class="ring">${ring(w/4)}<b>${w}</b></div><div><h3>${w} séance${w>1?'s':''} sur 7 jours</h3><small>Objectif : 3 à 4 séances par semaine</small></div></div>
+<div class="stats"><div class="card"><b>${tot}</b><small>minutes</small></div><div class="card"><b>${S.sess.length}</b><small>séances</small></div><div class="card"><b>${ov}%</b><small>maîtrise</small></div></div>
+<h3 style="margin:18px 2px 0">Avant de jouer</h3><div class="row" style="margin-top:8px"><button class="ghost" data-a="tool" data-id="tuner">Accorder la basse</button><button class="ghost" data-a="tool" data-id="metro">Métronome</button></div>`}
+function pathV(){let h='<div class="hd"><h1>Parcours</h1><p class="mu">Quatre semaines, du premier arpège à ta propre ligne de basse.</p></div>';
+[1,2,3,4].forEach(w=>{h+=`<div class="wk"><h3>Semaine ${w}<span>${WK[w]}</span></h3>`+L.filter(l=>l.w==w).map(l=>{const p=mp(l.id);return `<button class="les" data-a="open" data-id="${l.id}"><div class="card"><div class="sg"><div><h3>${l.t}</h3><small>${l.d} · ${mins(l)} min</small></div><b style="color:${p==1?'var(--ok)':'var(--mu)'}">${Math.round(p*100)}%</b></div><div class="bar"><i style="width:${p*100}%"></i></div></div></button>`}).join('')+'</div>'});return h}
+function toolsV(){let h=`<div class="hd"><h1>Outils</h1></div><div class="seg2"><button class="${ui.tl=='metro'?'on':''}" data-a="tool" data-id="metro">Métronome</button><button class="${ui.tl=='tuner'?'on':''}" data-a="tool" data-id="tuner">Accordeur</button></div>`;
+if(ui.tl=='metro')return h+`<div class="card cen"><div class="num" id="bpmv">${mt.bpm}</div><p class="mu">BPM</p><div class="dots">${[...Array(mt.beats)].map(()=>'<i class="dot"></i>').join('')}</div><input type="range" id="bpm" min="30" max="200" value="${mt.bpm}">
+<div class="row" style="margin:16px 0"><button class="rd" data-a="bm">−</button><button class="play" style="margin:auto" data-a="mplay">${mt.on?ICS:ICP}</button><button class="rd" data-a="bp">+</button></div>
+<div class="row"><button class="ghost" data-a="tap">Tap tempo</button><select id="beats">${[2,3,4,5,6,7].map(n=>`<option value="${n}" ${n==mt.beats?'selected':''}>${n} temps</option>`).join('')}</select></div></div>`;
+return h+`<div class="card cen"><div class="tnn" id="tn">–</div><p class="mu" id="tf">Active le micro et joue une corde</p><div class="mtr" id="mtr"><i style="left:50%"></i></div><button class="btn" id="mic" data-a="mic" style="margin-top:14px">${tn.on?'Arrêter le micro':'Activer le micro'}</button></div>
+<h3 style="margin:16px 2px 0">Note de référence</h3><div class="strs">${SN.map((s,i)=>`<button data-a="ref" data-i="${i}">${s}</button>`).join('')}</div><p class="mu" style="margin-top:10px;font-size:14px">Touche une corde pour entendre sa note, puis accorde ta basse à l’oreille ou au micro. Les cordes passent en vert quand elles sont justes.</p>`}
+const ST=['À apprendre','En cours','Maîtrisée'];
+function songsV(){return `<div class="hd"><h1>Chansons</h1><p class="mu">Ton répertoire à travailler.</p></div><div class="card"><input type="text" id="sg-t" placeholder="Titre de la chanson"><div class="row" style="margin-top:8px"><input type="text" id="sg-k" placeholder="Tonalité"><input type="text" id="sg-p" placeholder="Accords (Do La- Fa Sol)"></div><button class="btn" style="margin-top:10px" data-a="sadd">Ajouter</button></div>`
++(S.songs.length?S.songs.map((s,i)=>`<div class="card"><div class="sg"><div><h3>${esc(s.t)}</h3><small>${esc(s.k||'')} ${esc(s.p||'')}</small></div><button class="ib" data-a="sdel" data-i="${i}">×</button></div><button class="tag s${s.s}" style="margin-top:10px" data-a="sst" data-i="${i}">${ST[s.s]}</button></div>`).join(''):'<div class="card mu">Aucune chanson pour l’instant. Ajoute celle que tu veux jouer en premier.</div>')}
+function progV(){const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);const e=d.getTime()+864e5;return{l:'DLMMJVS'[d.getDay()],m:S.sess.filter(s=>s.t>=d.getTime()&&s.t<e).reduce((a,s)=>a+s.min,0)}}),mx=Math.max(15,...days.map(d=>d.m));
+return `<div class="hd"><h1>Progrès</h1></div><div class="card"><h3>Minutes de pratique, 7 jours</h3><div class="cols">${days.map(d=>`<div><i style="height:${d.m/mx*60}px"></i>${d.l}</div>`).join('')}</div></div>
+<div class="card"><h3>Maîtrise par semaine</h3>${[1,2,3,4].map(w=>{const ls=L.filter(l=>l.w==w),p=ls.reduce((a,l)=>a+mp(l.id),0)/ls.length;return `<div style="margin-top:12px"><div class="sg"><small>Semaine ${w} – ${WK[w]}</small><small>${Math.round(p*100)}%</small></div><div class="bar"><i style="width:${p*100}%"></i></div></div>`}).join('')}</div>
+<div class="card"><h3>Historique</h3>${S.sess.length?S.sess.slice(-8).reverse().map(s=>`<div class="sg" style="padding:8px 0;border-bottom:1px solid var(--ln)"><span>${esc((L.find(l=>l.id==s.id)||{t:'Séance'}).t)}</span><small>${new Date(s.t).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} · ${s.min} min</small></div>`).join(''):'<p class="mu" style="margin-top:6px">Ta première séance apparaîtra ici.</p>'}</div>
+<div class="row"><button class="ghost" data-a="exp">Copier ma sauvegarde</button><button class="ghost" data-a="imp">Restaurer</button></div>`}
+function render(){const v=$('#view');document.body.classList.toggle('lesson',ui.l!=null);
+v.innerHTML=ui.l!=null?lessonV():({home:homeV,path:pathV,tools:toolsV,songs:songsV,prog:progV})[ui.t]();
+$('#tabs').innerHTML=TB.map(([k,n])=>`<button class="${ui.t==k?'on':''}" data-a="tab" data-id="${k}"><svg viewBox="0 0 24 24"><path d="${IC[k]}"/></svg>${n}</button>`).join('');
+v.classList.remove('in');void v.offsetWidth;v.classList.add('in');if(ui.l!=null&&ui.k<lessonOf().s.length)drawBoard()}
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)};
+function stepTo(k){plStop();ui.k=k;ui.g=0;const l=lessonOf();if(k<l.s.length)ui.bpm=l.s[k].b;render();scrollTo(0,0)}
+function leave(){plStop();tnStop();if(ui.t!='tools')mtStop()}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,d=t.dataset;
+if(a=='tab'){leave();ui.t=d.id;ui.l=null;render()}
+else if(a=='tool'){leave();ui.t='tools';ui.tl=d.id;ui.l=null;render()}
+else if(a=='open'){leave();ui.l=d.id;stepTo(0)}
+else if(a=='back'){plStop();ui.l=null;render()}
+else if(a=='next')stepTo(ui.k+1);else if(a=='prev')stepTo(ui.k-1);
+else if(a=='grp'){plStop();ui.g=+d.i;drawBoard()}
+else if(a=='pn'){const o=cur().g[ui.g].p[+d.i];tone(o.m,.7)}
+else if(a=='pplay'){if(pl.on)plStop();else{AC();pl.on=true;t.innerHTML=ICS;plTick()}}
+else if(a=='ck'){const m=S.mast[ui.l]=S.mast[ui.l]||[0,0,0,0,0];m[+d.i]=m[+d.i]?0:1;save();const y=scrollY;render();scrollTo(0,y)}
+else if(a=='done'){S.sess.push({t:Date.now(),id:ui.l,min:mins(lessonOf())});save();ui.l=null;ui.t='home';render();toast('Séance enregistrée')}
+else if(a=='mplay'){if(mt.on)mtStop();else{AC();mt.on=true;mt.i=0;mt.nt=ctx.currentTime+.05;mtRun()}render()}
+else if(a=='bm')setBpm(mt.bpm-5);else if(a=='bp')setBpm(mt.bpm+5);
+else if(a=='tap'){const n=Date.now();mt.taps=mt.taps.filter(x=>n-x<2000);mt.taps.push(n);if(mt.taps.length>1)setBpm(60000/((n-mt.taps[0])/(mt.taps.length-1)))}
+else if(a=='mic'){tn.on?(tnStop(),render()):tnStart()}
+else if(a=='ref')tone(OPEN[+d.i],1.6);
+else if(a=='sadd'){const g=i=>$('#'+i).value.trim();if(!g('sg-t'))return toast('Ajoute un titre');S.songs.push({t:g('sg-t'),k:g('sg-k'),p:g('sg-p'),s:0});save();render()}
+else if(a=='sst'){const s=S.songs[+d.i];s.s=(s.s+1)%3;save();render()}
+else if(a=='sdel'){if(confirm('Supprimer cette chanson ?')){S.songs.splice(+d.i,1);save();render()}}
+else if(a=='exp'){navigator.clipboard.writeText(JSON.stringify(S)).then(()=>toast('Sauvegarde copiée'),()=>prompt('Copie ta sauvegarde :',JSON.stringify(S)))}
+else if(a=='imp'){const v=prompt('Colle ta sauvegarde :');if(v)try{S=Object.assign(S,JSON.parse(v));save();render();toast('Données restaurées')}catch(x){toast('Sauvegarde invalide')}}});
+document.addEventListener('input',e=>{if(e.target.id=='bpm')setBpm(+e.target.value);if(e.target.id=='lb'){ui.bpm=+e.target.value;$('#lbv').textContent=ui.bpm}});
+document.addEventListener('change',e=>{if(e.target.id=='beats'){mt.beats=+e.target.value;mt.i=0;render()}});
+render();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>
