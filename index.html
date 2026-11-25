@@ -79,7 +79,7 @@ select,input[type=text]{background:var(--c2);color:var(--tx);border:1px solid va
 .sg{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .tag{border-radius:20px;padding:3px 12px;font-size:13px;background:var(--c2)}.tag.s1{background:#4a3a1c;color:var(--am)}.tag.s2{background:#1d3d2f;color:var(--ok)}
 .cols{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:10px}.cols div{flex:1;text-align:center;font-size:12px;color:var(--mu)}.cols i{display:block;background:var(--ac);border-radius:6px 6px 0 0;min-height:3px;margin-bottom:4px;transition:height .6s}
-#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 18px;border-radius:20px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:9}#toast.on{opacity:1}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));width:fit-content;max-width:min(440px,calc(100vw - 32px));margin:0 auto;background:#fff;color:#111;padding:12px 18px;border-radius:18px;font-weight:600;font-size:15px;line-height:1.35;text-align:center;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .25s,transform .25s;z-index:9;box-shadow:0 8px 30px rgba(0,0,0,.45)}#toast.on{opacity:1;transform:none}
 .cell{fill:transparent;cursor:pointer}.fl{fill:var(--ac);pointer-events:none;transform-box:fill-box;transform-origin:center;animation:fade .6s forwards}@keyframes fade{to{opacity:0;transform:scale(1.8)}}
 .nl{text-align:center;color:var(--mu);font-size:14px;margin-top:10px;min-height:21px}.chip{cursor:pointer}
 .inst{width:100%;max-width:340px;display:block;margin:auto}.hs{fill:#2a2420;stroke:#4a4038}.nk{fill:#1d1814}.nu{fill:#d9d6cf}.fl2{stroke:#3a3a40}
@@ -361,10 +361,12 @@ return sc[0].s>=1.8?sc[0]:null}
 const NOANS='Je n’ai pas de réponse préparée pour cette question. Essaie une des questions proposées ci-dessus, ou reformule avec les mots de la notion (par exemple « tierce », « arpège », « doigts », « rythme »).';
 const chatH=()=>((ui.chat&&ui.chat.id==ui.l)?ui.chat.m:[]).map(m=>`<div class="bub ${m.r=='user'?'u':'a'}">${esc(m.t)}</div>`).join('');
 const showChat=()=>{const c=$('#chat');if(!c)return;c.innerHTML=chatH();if(c.lastElementChild)c.lastElementChild.scrollIntoView({block:'nearest',behavior:'smooth'})};
-function pushQA(q,a){if(!ui.chat||ui.chat.id!=ui.l)ui.chat={id:ui.l,m:[]};ui.chat.m.push({r:'user',t:q},{r:'assistant',t:a});showChat()}
-function ask(q){q=(q||'').trim();if(!q)return;const i=$('#q');if(i)i.value='';const r=findFaq(q,lessonOf());pushQA(q,r?(r.s<3.6?'Je pense que tu parles de : « '+r.x[0]+' »\n\n':'')+r.x[1]:NOANS)}
-const askIdx=i=>{const f=faqOf(lessonOf())[i];if(f)pushQA(f[0],f[1])};
-const chatCard=()=>`<div class="card"><h3>Une question sur cette notion ?</h3><p class="mu" style="font-size:14px;margin:4px 0 8px">Touche une question ou écris la tienne : les réponses sont préparées pour ce module.</p><div id="chat">${chatH()}</div><div>${faqOf(lessonOf()).map((x,i)=>`<button class="cx" data-a="askq" data-i="${i}">${x[0]}</button>`).join('')}</div><div class="ask"><input type="text" id="q" placeholder="Ta question…" autocomplete="off"><button class="btn" data-a="ask">Envoyer</button></div></div>`;
+const asked=()=>(ui.chat&&ui.chat.id==ui.l)?ui.chat.asked:[];
+const qsH=()=>{const a=asked(),r=faqOf(lessonOf()).map((x,i)=>a.includes(i)?'':`<button class="cx" data-a="askq" data-i="${i}">${x[0]}</button>`).join('');return r||'<p class="mu" style="font-size:14px;margin:6px 0">Tu as parcouru toutes les questions proposées. Écris la tienne ci-dessous.</p>'};
+function pushQA(q,a,i){if(!ui.chat||ui.chat.id!=ui.l)ui.chat={id:ui.l,m:[],asked:[]};ui.chat.m.push({r:'user',t:q},{r:'assistant',t:a});if(i>=0&&!ui.chat.asked.includes(i))ui.chat.asked.push(i);showChat();const e=$('#qs');if(e)e.innerHTML=qsH()}
+function ask(q){q=(q||'').trim();if(!q)return;const inp=$('#q');if(inp)inp.value='';const l=lessonOf(),r=findFaq(q,l);pushQA(q,r?(r.s<3.6?'Je pense que tu parles de : « '+r.x[0]+' »\n\n':'')+r.x[1]:NOANS,r?faqOf(l).indexOf(r.x):-1)}
+const askIdx=i=>{const f=faqOf(lessonOf())[i];if(f)pushQA(f[0],f[1],i)};
+const chatCard=()=>`<div class="card"><h3>Une question sur cette notion ?</h3><p class="mu" style="font-size:14px;margin:4px 0 8px">Touche une question ou écris la tienne : les réponses sont préparées pour ce module.</p><div id="chat">${chatH()}</div><div id="qs">${qsH()}</div><div class="ask"><input type="text" id="q" placeholder="Ta question…" autocomplete="off"><button class="btn" data-a="ask">Envoyer</button></div></div>`;
 const rsCard=()=>`<div class="card"><h3>Recommencer à zéro</h3>`+(ui.rs?`<p class="mu" style="font-size:14px;margin:6px 0 12px">Choisis ce que tu veux effacer. Pense à exporter ta sauvegarde avant : tu pourras la restaurer ensuite.</p><button class="ghost" style="width:100%" data-a="rs1">Effacer ma progression</button><p class="mu" style="font-size:13px;margin:4px 2px 12px">Séances, maîtrise et reprises. Ton profil et tes chansons restent.</p><button class="ghost dang" style="width:100%" data-a="rs2">Tout effacer</button><p class="mu" style="font-size:13px;margin:4px 2px 12px">Progression, profil, chansons et audios. Tu refais le questionnaire.</p><button class="tag" data-a="rs0">Annuler</button>`:`<p class="mu" style="font-size:14px;margin:6px 0 12px">Repars d’un parcours vierge si tu le souhaites. Rien n’est effacé avant ta confirmation.</p><button class="ghost" style="width:100%" data-a="rs">Recommencer à zéro</button>`)+`</div>`;
 /* ---------- Vues ---------- */
 const IC={home:'M4 11l8-7 8 7v9h-5v-6H9v6H4z',path:'M5 19h6a4 4 0 000-8H8a4 4 0 010-8h8',tools:'M8 21l2-17h4l2 17zM12 16l5-8',songs:'M9 18V5l11-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zM20 16a3 3 0 11-6 0 3 3 0 016 0z',prog:'M5 20V10M12 20V4M19 20v-7'};
@@ -425,7 +427,7 @@ if(ui.ob==null&&ui.l!=null&&ui.k<lessonOf().s.length)drawBoard();
 if(ui.ob==null&&((ui.l!=null&&(lessonOf().s[ui.k]||{}).intro)||(ui.l==null&&ui.t=='home')))pvStart();else pvStop();
 if(ui.ob==null&&ui.l==null&&ui.t=='tools'&&ui.tl=='tuner')instMark(-1);
 if(ui.ob==null&&ui.l==null&&ui.t=='songs')S.songs.filter(s=>s.a).forEach(s=>aGet(s.id).then(b=>{const e=$('#au-'+s.id);if(b&&e)e.src=URL.createObjectURL(b)}))}
-const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1900)};
+let tt;const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),Math.min(7000,2800+m.length*55))};
 function stepTo(k){plStop();ui.k=k;ui.g=0;const l=lessonOf();if(k<l.s.length)ui.bpm=l.s[k].b;S.res=S.res||{};S.res[l.id]=k;save();render();scrollTo(0,0)}
 function leave(to){plStop();tnStop();pvStop();recStop();if(to!='tools')mtStop()}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,d=t.dataset;
